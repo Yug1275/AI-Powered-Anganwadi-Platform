@@ -53,7 +53,7 @@ export default function WorkerWellness() {
             >
               <ArrowLeft className="w-6 h-6 text-white" />
             </button>
-            <h1 className="font-bold text-white ml-4 tracking-wide">{t('wellnessTitle')}</h1>
+            <h3 className="font-bold text-white ml-4 tracking-wide">{t('wellnessTitle')}</h3>
           </div>
           <ConnectivityStatus />
         </div>

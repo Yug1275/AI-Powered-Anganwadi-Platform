@@ -70,7 +70,7 @@ export default function HomeVisitAssistant() {
           >
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <h1 className="font-bold text-white tracking-wide">{t('visitsHeader')}</h1>
+          <h3 className="font-bold text-white tracking-wide">{t('visitsHeader')}</h3>
           <div className="flex items-center gap-2">
             <ConnectivityStatus />
             <button className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform">

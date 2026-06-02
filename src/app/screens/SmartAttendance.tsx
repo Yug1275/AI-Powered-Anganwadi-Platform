@@ -131,7 +131,7 @@ export default function SmartAttendance() {
           >
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <h1 className="font-bold text-white tracking-wide">{t('attendanceHeader')}</h1>
+          <h3 className="font-bold text-white tracking-wide">{t('attendanceHeader')}</h3>
           <div className="flex items-center gap-2">
             <ConnectivityStatus />
             <div className="px-3 py-1 bg-white/20 rounded-full text-white text-xs font-semibold">

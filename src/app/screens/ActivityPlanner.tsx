@@ -123,7 +123,7 @@ export default function ActivityPlanner() {
           >
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <h1 className="font-bold text-white tracking-wide">{t('activityPlannerTitle')}</h1>
+          <h3 className="font-bold text-white tracking-wide">{t('activityPlannerTitle')}</h3>
           <div className="flex items-center gap-1.5">
             <ConnectivityStatus />
             <button 

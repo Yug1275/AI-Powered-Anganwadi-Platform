@@ -65,7 +65,7 @@ export default function ReportGenerator() {
             >
               <ArrowLeft className="w-6 h-6 text-white" />
             </button>
-            <h1 className="font-bold text-white ml-4 tracking-wide">{t('reportsHeader')}</h1>
+            <h3 className="font-bold text-white ml-4 tracking-wide">{t('reportsHeader')}</h3>
           </div>
           <ConnectivityStatus />
         </div>
