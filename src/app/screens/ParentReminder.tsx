@@ -4,100 +4,121 @@ import { PhoneFrame } from '../components/PhoneFrame';
 import { StatusBar } from '../components/StatusBar';
 import { BottomNav } from '../components/BottomNav';
 import { ArrowLeft } from 'lucide-react';
+import { t } from '../components/translations';
 
 export default function ParentReminder() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<'send' | 'history' | 'events'>('send');
   const [recipientType, setRecipientType] = useState<'all' | 'select'>('all');
   const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [language, setLanguage] = useState<'hindi' | 'gujarati' | 'english'>('hindi');
 
   const reminderTypes = [
-    { id: 'vaccination', icon: '💉', label: 'Vaccination due' },
-    { id: 'nutrition', icon: '🍽️', label: 'Nutrition distribution' },
-    { id: 'meeting', icon: '📅', label: 'Parent meeting' },
-    { id: 'alert', icon: '⚠️', label: 'Health alert' },
-    { id: 'event', icon: '🎉', label: 'Event / celebration' },
-    { id: 'custom', icon: '✏️', label: 'Custom message' },
+    { id: 'vaccination', icon: '💉', labelKey: 'reminderVaccination' },
+    { id: 'nutrition', icon: '🍽️', labelKey: 'reminderNutrition' },
+    { id: 'meeting', icon: '📅', labelKey: 'reminderMeeting' },
+    { id: 'alert', icon: '⚠️', labelKey: 'reminderAlert' },
+    { id: 'event', icon: '🎉', labelKey: 'reminderEvent' },
+    { id: 'custom', icon: '✏️', labelKey: 'reminderCustom' },
   ];
+
+  const getPreviewMessage = () => {
+    if (!selectedType) return "";
+    const keyMap: Record<string, string> = {
+      vaccination: 'reminderMsgVaccination',
+      nutrition: 'reminderMsgNutrition',
+      meeting: 'reminderMsgMeeting',
+      alert: 'reminderMsgAlert',
+      event: 'reminderMsgEvent',
+      custom: 'reminderMsgCustom',
+    };
+    const key = keyMap[selectedType] || 'reminderMsgCustom';
+    return t(key);
+  };
 
   return (
     <PhoneFrame>
-      <div className="w-full h-full flex flex-col">
+      <div className="w-full h-full flex flex-col relative overflow-hidden animate-page-fade">
         <StatusBar purple />
 
         {/* App Bar */}
-        <div className="bg-[#5C35C0] px-4 py-3 flex items-center">
-          <button onClick={() => navigate('/dashboard')}>
+        <div className="bg-[#5C35C0] px-4 py-3 flex items-center shadow-sm z-10">
+          <button 
+            onClick={() => navigate('/dashboard')}
+            className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
+          >
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <h1 className="font-bold text-white ml-4">Parent Connect</h1>
+          <h1 className="font-bold text-white ml-4 tracking-wide">{t('parentConnectTitle')}</h1>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b bg-white">
-          {(['send', 'history', 'events'] as const).map((t) => (
+        <div className="flex border-b bg-white shadow-sm z-10">
+          {[
+            { id: 'send', label: t('sendTab') },
+            { id: 'history', label: t('historyTab') },
+            { id: 'events', label: t('eventsTab') }
+          ].map((item) => (
             <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`flex-1 py-3 text-sm font-medium capitalize transition-colors ${
-                tab === t
-                  ? 'text-[#5C35C0] border-b-2 border-[#5C35C0]'
+              key={item.id}
+              onClick={() => setTab(item.id as any)}
+              className={`flex-1 py-3 text-xs font-bold uppercase tracking-wide transition-colors ${
+                tab === item.id
+                  ? 'text-[#5C35C0] border-b-3 border-[#5C35C0]'
                   : 'text-[#6B6B6B]'
               }`}
             >
-              {t === 'send' ? 'Send Reminder' : t}
+              {item.label}
             </button>
           ))}
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto pb-20">
+        <div className="flex-1 overflow-y-auto pb-20 bg-slate-50 scrollbar-hide">
           {tab === 'send' && (
-            <div className="p-4 space-y-6">
+            <div className="p-4 space-y-6 animate-page-fade">
               {/* Recipient Selector */}
-              <div>
-                <h3 className="font-semibold text-[#1C1C1C] mb-3">Send To</h3>
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                <h3 className="font-bold text-[#1C1C1C] text-xs uppercase tracking-wider mb-3">{t('sendToLabel')}</h3>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setRecipientType('all')}
-                    className={`flex-1 py-2.5 rounded-lg font-medium text-sm transition-all ${
+                    className={`flex-1 py-2.5 rounded-lg font-bold text-xs transition-all active:scale-95 ${
                       recipientType === 'all'
-                        ? 'bg-[#5C35C0] text-white'
-                        : 'bg-gray-100 text-[#6B6B6B]'
+                        ? 'bg-[#5C35C0] text-white shadow-sm'
+                        : 'bg-gray-100 text-[#6B6B6B] hover:bg-slate-200'
                     }`}
                   >
-                    All Parents
+                    {t('allParents')}
                   </button>
                   <button
                     onClick={() => setRecipientType('select')}
-                    className={`flex-1 py-2.5 rounded-lg font-medium text-sm transition-all ${
+                    className={`flex-1 py-2.5 rounded-lg font-bold text-xs transition-all active:scale-95 ${
                       recipientType === 'select'
-                        ? 'bg-[#5C35C0] text-white'
-                        : 'bg-gray-100 text-[#6B6B6B]'
+                        ? 'bg-[#5C35C0] text-white shadow-sm'
+                        : 'bg-gray-100 text-[#6B6B6B] hover:bg-slate-200'
                     }`}
                   >
-                    Select Children
+                    {t('selectChildren')}
                   </button>
                 </div>
               </div>
 
               {/* Reminder Type */}
-              <div>
-                <h3 className="font-semibold text-[#1C1C1C] mb-3">Reminder Type</h3>
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                <h3 className="font-bold text-[#1C1C1C] text-xs uppercase tracking-wider mb-3">Reminder Type</h3>
                 <div className="grid grid-cols-2 gap-3">
                   {reminderTypes.map((type) => (
                     <button
                       key={type.id}
                       onClick={() => setSelectedType(type.id)}
-                      className={`h-[72px] rounded-xl border transition-all ${
+                      className={`h-[80px] rounded-xl border flex flex-col items-center justify-center transition-all active:scale-95 ${
                         selectedType === type.id
-                          ? 'border-2 border-[#5C35C0] bg-[#F0ECFF]'
-                          : 'border border-gray-200 bg-white'
+                          ? 'border-2 border-[#5C35C0] bg-[#F0ECFF] shadow-sm'
+                          : 'border border-slate-200 bg-white hover:bg-slate-50'
                       }`}
                     >
-                      <div className="text-2xl mb-1">{type.icon}</div>
-                      <div className="text-xs font-medium text-[#1C1C1C]">{type.label}</div>
+                      <div className="text-xl mb-1">{type.icon}</div>
+                      <div className="text-[10px] font-bold text-[#1C1C1C] text-center leading-tight px-1">{t(type.labelKey)}</div>
                     </button>
                   ))}
                 </div>
@@ -105,49 +126,35 @@ export default function ParentReminder() {
 
               {/* Message Preview */}
               {selectedType && (
-                <div>
-                  <h3 className="font-semibold text-[#1C1C1C] mb-3">Message Preview</h3>
-                  <div className="bg-[#F0ECFF] rounded-xl p-4 mb-3">
-                    <p className="text-sm text-[#1C1C1C] leading-relaxed">
-                      Dear parent, Vaccination (Measles) for [Child Name] is due on [Date]. Please visit ICDS Centre 04 between 9am-12pm.
+                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 animate-fade-in">
+                  <h3 className="font-bold text-[#1C1C1C] text-xs uppercase tracking-wider mb-3">{t('previewLabel')}</h3>
+                  <div className="bg-[#F0ECFF] rounded-xl p-3.5 mb-4 border border-[#5C35C0]/10">
+                    <p className="text-xs text-[#1C1C1C] leading-relaxed font-semibold">
+                      {getPreviewMessage()}
                     </p>
                   </div>
 
-                  {/* Language Toggle */}
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm text-[#6B6B6B]">Language</span>
-                    <div className="inline-flex bg-gray-100 rounded-lg p-1">
-                      {(['hindi', 'gujarati', 'english'] as const).map((lang) => (
-                        <button
-                          key={lang}
-                          onClick={() => setLanguage(lang)}
-                          className={`px-3 py-1 rounded-md text-xs font-medium capitalize transition-all ${
-                            language === lang
-                              ? 'bg-white text-[#5C35C0] shadow-sm'
-                              : 'text-[#6B6B6B]'
-                          }`}
-                        >
-                          {lang}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <button className="text-sm text-[#5C35C0] font-medium mb-4">
-                    Edit message
+                  <button 
+                    onClick={() => alert('Message editor opened!')}
+                    className="text-xs text-[#5C35C0] font-bold mb-5 hover:underline"
+                  >
+                    Edit message template
                   </button>
 
                   {/* Send Options */}
                   <div className="space-y-3">
-                    <button className="w-full h-12 bg-green-600 text-white rounded-lg font-medium flex items-center justify-center gap-2">
-                      <span className="text-xl">📱</span>
-                      Send via WhatsApp
+                    <button 
+                      onClick={() => alert('Sending broadcast via WhatsApp...')}
+                      className="w-full h-11 bg-green-600 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-transform hover:bg-green-700 shadow-sm"
+                    >
+                      <span className="text-lg">📱</span>
+                      {t('whatsappBtn')}
                     </button>
-                    <button className="w-full h-12 border-2 border-[#5C35C0] text-[#5C35C0] rounded-lg font-medium">
-                      Send via SMS
-                    </button>
-                    <button className="text-sm text-[#6B6B6B] text-center w-full">
-                      Schedule for later
+                    <button 
+                      onClick={() => alert('Sending broadcast via SMS...')}
+                      className="w-full h-11 border-2 border-[#5C35C0] text-[#5C35C0] rounded-xl font-bold text-xs hover:bg-slate-50 transition-colors active:scale-95 flex items-center justify-center"
+                    >
+                      {t('smsBtn')}
                     </button>
                   </div>
                 </div>
@@ -156,32 +163,32 @@ export default function ParentReminder() {
           )}
 
           {tab === 'history' && (
-            <div className="p-4 space-y-3">
+            <div className="p-4 space-y-3 animate-page-fade">
               {[
-                { date: 'Jun 2, 2025', type: 'Vaccination Reminder', count: 12 },
-                { date: 'May 28, 2025', type: 'Parent Meeting', count: 32 },
-                { date: 'May 25, 2025', type: 'Nutrition Distribution', count: 32 },
+                { date: 'Jun 2, 2026', typeKey: 'reminderVaccination', count: 12 },
+                { date: 'May 28, 2025', typeKey: 'reminderMeeting', count: 32 },
+                { date: 'May 25, 2025', typeKey: 'reminderNutrition', count: 32 },
               ].map((item, i) => (
-                <div key={i} className="bg-white rounded-xl p-4 shadow-sm">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-semibold text-[#1C1C1C] text-sm">{item.type}</span>
-                    <span className="text-xs text-[#6B6B6B]">{item.date}</span>
+                <div key={i} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                  <div className="flex items-center justify-between mb-1.5 border-b pb-1">
+                    <span className="font-extrabold text-[#1C1C1C] text-xs">{t(item.typeKey)}</span>
+                    <span className="text-[10px] text-gray-400 font-semibold">{item.date}</span>
                   </div>
-                  <p className="text-xs text-[#6B6B6B]">Sent to {item.count} parents</p>
+                  <p className="text-[10px] text-[#6B6B6B] font-semibold">Sent to {item.count} parents successfully</p>
                 </div>
               ))}
             </div>
           )}
 
           {tab === 'events' && (
-            <div className="p-4 space-y-3">
+            <div className="p-4 space-y-3 animate-page-fade">
               {[
-                { date: 'Jun 10, 2025', event: 'Nutrition Day Celebration', time: '10:00 AM' },
-                { date: 'Jun 15, 2025', event: 'Parent-Teacher Meeting', time: '2:00 PM' },
+                { date: 'Jun 10, 2026', event: 'Nutrition Day Celebration', time: '10:00 AM' },
+                { date: 'Jun 15, 2026', event: 'Parent-Teacher Meeting', time: '2:00 PM' },
               ].map((item, i) => (
-                <div key={i} className="bg-white rounded-xl p-4 shadow-sm border-l-4 border-[#E8A020]">
-                  <div className="font-semibold text-[#1C1C1C] text-sm mb-1">{item.event}</div>
-                  <p className="text-xs text-[#6B6B6B]">
+                <div key={i} className="bg-white rounded-xl p-4 shadow-sm border-l-4 border-[#E8A020] border-y border-r border-slate-100">
+                  <div className="font-extrabold text-[#1C1C1C] text-xs mb-1">{item.event}</div>
+                  <p className="text-[10px] text-gray-500 font-semibold">
                     {item.date} · {item.time}
                   </p>
                 </div>
