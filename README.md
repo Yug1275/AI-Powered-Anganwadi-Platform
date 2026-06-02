@@ -1,7 +1,7 @@
 
-  # Design iPhone 15 Pro Screen
+  # AI-Powered Anganwadi Platform
 
-  This is a code bundle for Design iPhone 15 Pro Screen. The original project is available at https://www.figma.com/design/8CdGfbYYk9lQTGI5qQMTGo/Design-iPhone-15-Pro-Screen.
+  This is a code bundle for Design iPhone 15 Pro Screen. The original project is available at https://www.figma.com/design/8CdGfbYYk9lQTGI5qQMTGo/AI-Powered-Anganwadi-Platform.
 
   ## Running the code
 
