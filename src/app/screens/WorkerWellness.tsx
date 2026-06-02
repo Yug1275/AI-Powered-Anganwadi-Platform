@@ -5,6 +5,7 @@ import { StatusBar } from '../components/StatusBar';
 import { BottomNav } from '../components/BottomNav';
 import { ArrowLeft, Sparkles } from 'lucide-react';
 import { t } from '../components/translations';
+import { ConnectivityStatus } from '../components/ConnectivityStatus';
 
 export default function WorkerWellness() {
   const navigate = useNavigate();
@@ -44,14 +45,17 @@ export default function WorkerWellness() {
         <StatusBar purple />
 
         {/* App Bar */}
-        <div className="bg-[#5C35C0] px-4 py-3 flex items-center shadow-sm z-10">
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
-          >
-            <ArrowLeft className="w-6 h-6 text-white" />
-          </button>
-          <h1 className="font-bold text-white ml-4 tracking-wide">{t('wellnessTitle')}</h1>
+        <div className="bg-[#5C35C0] px-4 py-3 flex items-center justify-between shadow-sm z-30">
+          <div className="flex items-center">
+            <button 
+              onClick={() => navigate('/dashboard')}
+              className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
+            >
+              <ArrowLeft className="w-6 h-6 text-white" />
+            </button>
+            <h1 className="font-bold text-white ml-4 tracking-wide">{t('wellnessTitle')}</h1>
+          </div>
+          <ConnectivityStatus />
         </div>
 
         {/* Content */}

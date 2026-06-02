@@ -151,7 +151,10 @@ export default function Login() {
           )}
 
           <button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => {
+              localStorage.setItem('isLoggedIn', 'true');
+              navigate('/dashboard');
+            }}
             className="w-full h-[52px] bg-[#5C35C0] text-white rounded-xl font-bold text-xs mt-6 hover:bg-[#4A2A9F] active:scale-95 transition-all shadow-md"
           >
             {t('loginBtn')}

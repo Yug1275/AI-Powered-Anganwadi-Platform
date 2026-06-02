@@ -4,6 +4,7 @@ import { StatusBar } from '../components/StatusBar';
 import { BottomNav } from '../components/BottomNav';
 import { ArrowLeft, Filter, Phone, Check, MapPin, Sparkles } from 'lucide-react';
 import { t } from '../components/translations';
+import { ConnectivityStatus } from '../components/ConnectivityStatus';
 
 export default function HomeVisitAssistant() {
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ export default function HomeVisitAssistant() {
         <StatusBar purple />
 
         {/* App Bar */}
-        <div className="bg-[#5C35C0] px-4 py-3 flex items-center justify-between shadow-sm z-10">
+        <div className="bg-[#5C35C0] px-4 py-3 flex items-center justify-between shadow-sm z-30">
           <button 
             onClick={() => navigate('/dashboard')}
             className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
@@ -70,9 +71,12 @@ export default function HomeVisitAssistant() {
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
           <h1 className="font-bold text-white tracking-wide">{t('visitsHeader')}</h1>
-          <button className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform">
-            <Filter className="w-5 h-5 text-white" />
-          </button>
+          <div className="flex items-center gap-2">
+            <ConnectivityStatus />
+            <button className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform">
+              <Filter className="w-5 h-5 text-white" />
+            </button>
+          </div>
         </div>
 
         {/* Summary Strip */}
@@ -159,7 +163,25 @@ export default function HomeVisitAssistant() {
                       {btnCall}
                     </button>
                     <button 
-                      onClick={() => alert('Visit status marked as completed!')}
+                      onClick={() => {
+                        const isOnline = localStorage.getItem('isOnline') !== 'false';
+                        if (!isOnline) {
+                          window.dispatchEvent(new CustomEvent('show-toast', { 
+                            detail: { message: t('savedOfflineMessage') || 'Saved Offline ✓ Will sync automatically later.' } 
+                          }));
+                          const pendingQueue = JSON.parse(localStorage.getItem('pendingQueue') || '[]');
+                          const newItem = {
+                            id: Date.now(),
+                            type: 'Home Visit: ' + visit.name,
+                            status: 'Pending',
+                            details: 'Marked Completed',
+                            size: '0.04 MB'
+                          };
+                          localStorage.setItem('pendingQueue', JSON.stringify([...pendingQueue, newItem]));
+                        } else {
+                          alert('Visit status marked as completed!');
+                        }
+                      }}
                       className="flex-1 h-9 border border-green-600 text-green-600 rounded-lg text-[10px] font-bold flex items-center justify-center gap-1 active:scale-95 transition-transform"
                     >
                       <Check className="w-3 h-3" />

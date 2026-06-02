@@ -3,14 +3,110 @@ import { useNavigate } from 'react-router';
 import { PhoneFrame } from '../components/PhoneFrame';
 import { StatusBar } from '../components/StatusBar';
 import { BottomNav } from '../components/BottomNav';
-import { ArrowLeft, Mic, Camera, Edit3 } from 'lucide-react';
+import { ArrowLeft, Mic, Camera, Edit3, Play, Pause, X } from 'lucide-react';
 import { t } from '../components/translations';
+import { ConnectivityStatus } from '../components/ConnectivityStatus';
 
 export default function SmartAttendance() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<'voice' | 'photo' | 'manual'>('voice');
   const [attendance, setAttendance] = useState<Record<number, boolean>>({});
   const [isRecording, setIsRecording] = useState(false);
+
+  // Voice Log flow states
+  const [voiceLogCaptureOpen, setVoiceLogCaptureOpen] = useState(false);
+  const [reviewLogOpen, setReviewLogOpen] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
+  const [transcriptionText, setTranscriptionText] = useState('');
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+
+  // Editable fields for review log
+  const [editChildName, setEditChildName] = useState('Aarav Patel');
+  const [editMetric, setEditMetric] = useState('Weight');
+  const [editValue, setEditValue] = useState('14.0 kg');
+
+  const getSimulatedTranscript = () => {
+    const lang = localStorage.getItem('selectedLanguage') || 'hi';
+    switch(lang) {
+      case 'gu': return 'Aarav nu vajan 14 kilo chhe...';
+      case 'hi': return 'आरव का वजन 14 किलो है...';
+      case 'mr': return 'आरवचे वजन 14 खाली आहे...';
+      case 'ta': return 'ஆரவ்வின் எடை 14 கிலோ...';
+      case 'te': return 'ఆరవ్ బరువు 14 కిలోలు...';
+      default: return "Aarav's weight is 14 kg...";
+    }
+  };
+
+  const startVoiceLogFlow = () => {
+    setVoiceLogCaptureOpen(true);
+    setIsTranscribing(true);
+    setTranscriptionText('');
+    
+    const transcript = getSimulatedTranscript();
+    const words = transcript.split(' ');
+    let currentWordIndex = 0;
+    
+    const interval = setInterval(() => {
+      if (currentWordIndex < words.length) {
+        setTranscriptionText((prev) => prev + (prev ? ' ' : '') + words[currentWordIndex]);
+        currentWordIndex++;
+      } else {
+        clearInterval(interval);
+        setIsTranscribing(false);
+      }
+    }, 450);
+
+    (window as any).captureInterval = interval;
+  };
+
+  const stopAndProcessVoiceLog = () => {
+    if ((window as any).captureInterval) {
+      clearInterval((window as any).captureInterval);
+    }
+    setIsTranscribing(false);
+    setTranscriptionText(getSimulatedTranscript());
+    setVoiceLogCaptureOpen(false);
+    setReviewLogOpen(true);
+  };
+
+  const cancelVoiceLogFlow = () => {
+    if ((window as any).captureInterval) {
+      clearInterval((window as any).captureInterval);
+    }
+    setVoiceLogCaptureOpen(false);
+    setIsTranscribing(false);
+    setTranscriptionText('');
+  };
+
+  const handleSaveToOffline = () => {
+    window.dispatchEvent(new CustomEvent('show-toast', { 
+      detail: { message: t('savedOfflineMessage') || 'Saved Offline ✓ Will sync automatically later.' } 
+    }));
+    
+    let pendingQueue = [];
+    const saved = localStorage.getItem('pendingQueue');
+    if (saved) {
+      pendingQueue = JSON.parse(saved);
+    } else {
+      const defaultQueue = [
+        { id: 1, type: 'Morning Attendance', status: 'Pending', details: 'Marked 28 children present', size: '0.45 MB' },
+        { id: 2, type: 'Voice Log: Aarav Weight', status: 'Pending', details: 'Weight metric: 14.0 kg', size: '0.12 MB' },
+        { id: 3, type: 'Child Growth Alert', status: 'Pending', details: 'Growth risk warning logged', size: '0.62 MB' },
+        { id: 4, type: 'Parent Notification', status: 'Pending', details: 'WhatsApp reminder queued', size: '0.08 MB' },
+      ];
+      pendingQueue = defaultQueue;
+    }
+    const newItem = {
+      id: Date.now(),
+      type: 'Voice Log: ' + editChildName + ' ' + editMetric,
+      status: 'Pending',
+      details: editMetric + ': ' + editValue,
+      size: '0.12 MB'
+    };
+    localStorage.setItem('pendingQueue', JSON.stringify([...pendingQueue, newItem]));
+    
+    setReviewLogOpen(false);
+  };
 
   const children = [
     { id: 1, nameKey: 'child1Name', age: '2yr 4mo', initials: 'AP', color: 'bg-pink-400' },
@@ -28,7 +124,7 @@ export default function SmartAttendance() {
         <StatusBar purple />
 
         {/* App Bar */}
-        <div className="bg-[#5C35C0] px-4 py-3 flex items-center justify-between shadow-sm z-10">
+        <div className="bg-[#5C35C0] px-4 py-3 flex items-center justify-between shadow-sm z-30">
           <button 
             onClick={() => navigate('/dashboard')}
             className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
@@ -36,8 +132,11 @@ export default function SmartAttendance() {
             <ArrowLeft className="w-6 h-6 text-white" />
           </button>
           <h1 className="font-bold text-white tracking-wide">{t('attendanceHeader')}</h1>
-          <div className="px-3 py-1 bg-white/20 rounded-full text-white text-xs font-semibold">
-            Jun 3
+          <div className="flex items-center gap-2">
+            <ConnectivityStatus />
+            <div className="px-3 py-1 bg-white/20 rounded-full text-white text-xs font-semibold">
+              Jun 3
+            </div>
           </div>
         </div>
 
@@ -68,7 +167,7 @@ export default function SmartAttendance() {
           {tab === 'voice' && (
             <div className="p-4 animate-page-fade">
               {/* Voice Scanner Box */}
-              <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-4 flex flex-col items-center justify-center text-center min-h-[220px]">
+              <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 mb-4 flex flex-col items-center justify-center text-center min-h-[200px]">
                 {isRecording ? (
                   <div className="flex flex-col items-center animate-fade-in">
                     {/* Recording Visualizer Waveform */}
@@ -85,21 +184,14 @@ export default function SmartAttendance() {
                 ) : (
                   <div className="flex flex-col items-center animate-fade-in">
                     <button
-                      onClick={() => {
-                        setIsRecording(true);
-                        setTimeout(() => {
-                          setIsRecording(false);
-                          // Auto-detect children: mark Ananya, Rahul, Priya, Amit as present
-                          setAttendance({ 1: true, 2: true, 3: true, 4: true, 5: false });
-                        }, 2200);
-                      }}
+                      onClick={startVoiceLogFlow}
                       className="w-16 h-16 bg-[#5C35C0] hover:bg-[#4A2A9F] text-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform mb-3 border-4 border-purple-100"
                     >
                       <Mic className="w-6 h-6 text-white" />
                     </button>
-                    <div className="text-xs font-bold text-[#1C1C1C]">{t('voiceAttendanceHeader')}</div>
-                    <p className="text-[10px] text-gray-500 mt-1 max-w-[200px]">
-                      {t('pressToRecord')}
+                    <div className="text-xs font-bold text-[#1C1C1C]">{t('voiceLog') || 'Voice Log Attendance'}</div>
+                    <p className="text-[10px] text-gray-500 mt-1 max-w-[220px]">
+                      Tap microphone to log weight, height, or attendance via voice
                     </p>
                   </div>
                 )}
@@ -204,12 +296,178 @@ export default function SmartAttendance() {
             {markedCount} / 32 {t('marked')}
           </div>
           <button 
-            onClick={() => alert('Attendance submitted successfully!')}
+            onClick={() => {
+              const isOnline = localStorage.getItem('isOnline') !== 'false';
+              if (!isOnline) {
+                window.dispatchEvent(new CustomEvent('show-toast', { 
+                  detail: { message: t('savedOfflineMessage') || 'Saved Offline ✓ Will sync automatically later.' } 
+                }));
+              } else {
+                alert('Attendance submitted successfully!');
+              }
+            }}
             className="w-full h-12 bg-[#5C35C0] text-white rounded-xl font-bold text-xs hover:bg-[#4A2A9F] shadow-md transition-colors active:scale-95"
           >
             {t('submitAttendance')}
           </button>
         </div>
+
+        {/* VOICE CAPTURE SCREEN OVERLAY */}
+        {voiceLogCaptureOpen && (
+          <div className="absolute inset-0 bg-black/60 z-50 flex flex-col justify-end animate-fade-in">
+            <div className="absolute inset-0" onClick={cancelVoiceLogFlow} />
+            <div className="relative bg-white rounded-t-3xl shadow-2xl z-50 p-5 flex flex-col border-t border-slate-100 animate-slide-in-up max-h-[85%]">
+              <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4" />
+              
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-xs font-extrabold text-[#5C35C0] tracking-wider uppercase">
+                  {t('listeningIn') || `Listening in ${t('language')}...`}
+                </span>
+                <button 
+                  onClick={cancelVoiceLogFlow}
+                  className="p-1 hover:bg-slate-100 rounded-full transition-colors"
+                >
+                  <X className="w-5 h-5 text-slate-500" />
+                </button>
+              </div>
+
+              {/* Recording Animation */}
+              <div className="flex flex-col items-center py-6">
+                <div className="relative w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mb-5 animate-pulse">
+                  <div className="absolute inset-0 rounded-full bg-purple-200 opacity-50 scale-125 animate-ping" />
+                  <Mic className="w-8 h-8 text-[#5C35C0]" />
+                </div>
+                
+                {/* Live Transcription Box */}
+                <div className="w-full bg-slate-50 rounded-xl p-4 border border-slate-200/60 min-h-[90px] shadow-inner mb-6 text-center">
+                  {transcriptionText ? (
+                    <p className="text-xs text-[#1C1C1C] font-extrabold italic animate-fade-in leading-relaxed">
+                      "{transcriptionText}"
+                    </p>
+                  ) : (
+                    <p className="text-[10px] text-slate-400 font-semibold italic">
+                      Start speaking child's name, weight, or health observations...
+                    </p>
+                  )}
+                </div>
+
+                {/* Control Buttons */}
+                <div className="grid grid-cols-2 gap-3 w-full">
+                  <button
+                    onClick={cancelVoiceLogFlow}
+                    className="py-3 border border-slate-300 text-slate-700 rounded-xl font-bold text-xs hover:bg-slate-100 transition-all active:scale-95"
+                  >
+                    {t('cancel') || 'Cancel'}
+                  </button>
+                  <button
+                    onClick={stopAndProcessVoiceLog}
+                    className="py-3 bg-[#5C35C0] hover:bg-[#4A2A9F] text-white rounded-xl font-bold text-xs shadow-md transition-all active:scale-95"
+                  >
+                    {t('stopProcess') || 'Stop & Process'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* REVIEW LOG SCREEN OVERLAY */}
+        {reviewLogOpen && (
+          <div className="absolute inset-0 bg-black/60 z-50 flex flex-col justify-end animate-fade-in">
+            <div className="absolute inset-0" onClick={() => setReviewLogOpen(false)} />
+            <div className="relative bg-white rounded-t-3xl shadow-2xl z-50 p-5 flex flex-col border-t border-slate-100 animate-slide-in-up max-h-[90%] overflow-y-auto">
+              <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4" />
+              
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="font-extrabold text-[#1C1C1C] text-sm">{t('reviewLog') || 'Review Log'}</h2>
+                <button 
+                  onClick={() => setReviewLogOpen(false)}
+                  className="text-xs text-slate-500 font-bold hover:underline"
+                >
+                  Close
+                </button>
+              </div>
+
+              {/* Status Banner */}
+              <div className="bg-green-50 border border-green-200 text-green-800 text-[10px] font-extrabold p-2.5 rounded-xl mb-4 flex items-center gap-1.5">
+                <span>✓</span>
+                <span>{t('aiProcessedVoice') || 'AI processed your voice note'}</span>
+              </div>
+
+              {/* Audio Preview Card */}
+              <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-100 mb-4 flex items-center gap-3.5">
+                <button
+                  onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+                  className="w-10 h-10 bg-[#5C35C0] text-white rounded-full flex items-center justify-center shadow-sm active:scale-90 transition-transform flex-shrink-0"
+                >
+                  {isPlayingAudio ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-white ml-0.5" />}
+                </button>
+                
+                {/* Waveform lines */}
+                <div className="flex-1 flex items-center justify-center gap-1 h-8">
+                  {[4, 8, 12, 16, 12, 6, 10, 16, 20, 14, 8, 4, 10, 18, 12, 6].map((h, i) => (
+                    <div
+                      key={i}
+                      style={{ height: `${h}px` }}
+                      className={`w-0.5 rounded-full transition-colors ${isPlayingAudio ? 'bg-[#5C35C0] animate-voice-bar-' + (i%5+1) : 'bg-slate-300'}`}
+                    />
+                  ))}
+                </div>
+                <div className="text-[10px] font-bold text-gray-500">0:04</div>
+              </div>
+
+              {/* AI Extracted Data Section */}
+              <div className="space-y-3 mb-4">
+                <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">AI Extracted Data</h4>
+                
+                <div>
+                  <label className="block text-[10px] font-extrabold text-slate-700 mb-1">Child Name</label>
+                  <input
+                    type="text"
+                    value={editChildName}
+                    onChange={(e) => setEditChildName(e.target.value)}
+                    className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#5C35C0]"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-slate-700 mb-1">Metric</label>
+                    <input
+                      type="text"
+                      value={editMetric}
+                      onChange={(e) => setEditMetric(e.target.value)}
+                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#5C35C0]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-extrabold text-slate-700 mb-1">Value</label>
+                    <input
+                      type="text"
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="w-full h-10 px-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#5C35C0]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Confidence Card */}
+              <div className="bg-purple-50/50 border border-purple-100/50 rounded-xl p-3.5 mb-5 flex items-center justify-between text-xs font-bold text-[#5C35C0]">
+                <span>{t('aiConfidence') || 'AI Confidence'}: 98%</span>
+                <span className="text-[10px] text-purple-700">{editChildName} {t('matchedFromRoster') || 'matched from roster.'}</span>
+              </div>
+
+              {/* Bottom Button */}
+              <button
+                onClick={handleSaveToOffline}
+                className="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-xs shadow-md transition-all active:scale-95"
+              >
+                {t('saveToOfflineQueue') || 'Save to Offline Queue'}
+              </button>
+            </div>
+          </div>
+        )}
 
         <BottomNav />
       </div>

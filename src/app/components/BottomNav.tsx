@@ -10,6 +10,7 @@ export function BottomNav() {
     { icon: '👶', labelKey: 'children', path: '/child/1' },
     { icon: '🎨', labelKey: 'activities', path: '/activities' },
     { icon: '📄', labelKey: 'reports', path: '/reports' },
+    { icon: '📶', labelKey: 'offline', path: '/offline' },
   ];
 
   return (

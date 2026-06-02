@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { PhoneFrame } from '../components/PhoneFrame';
 import { StatusBar } from '../components/StatusBar';
 import { BottomNav } from '../components/BottomNav';
 import { t, getSelectedLanguage } from '../components/translations';
+import { ConnectivityStatus } from '../components/ConnectivityStatus';
 import { 
   Bell, 
   Menu, 
@@ -18,6 +19,10 @@ import {
 
 export default function Dashboard() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.setItem('isLoggedIn', 'true');
+  }, []);
 
   // Active language display mapping
   const langMap: Record<string, string> = {
@@ -34,6 +39,8 @@ export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   return (
     <PhoneFrame>
@@ -50,9 +57,10 @@ export default function Dashboard() {
           </button>
           <span className="text-white font-bold text-lg tracking-wide">{t('appTitle')}</span>
           <div className="flex items-center gap-3">
+            <ConnectivityStatus />
             <button 
               onClick={() => setNotificationsOpen(true)}
-              className="relative p-1 hover:bg-white/10 rounded-full active:scale-90 transition-transform"
+              className="relative p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
             >
               <Bell className="w-5 h-5 text-white" />
               <div className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-[#E8A020] rounded-full text-white text-[9px] font-bold flex items-center justify-center shadow-sm border border-[#5C35C0]">
@@ -78,7 +86,13 @@ export default function Dashboard() {
             <div className="flex justify-between items-start">
               <div>
                 <h2 className="text-xl font-bold tracking-tight">{t('goodMorning')}</h2>
-                <p className="text-[11px] opacity-75 mt-0.5 font-medium">{t('todayDate')}</p>
+                <div className="flex flex-col gap-1.5 mt-1">
+                  <p className="text-[11px] opacity-75 font-semibold">{t('todayDate')}</p>
+                  <div className="inline-flex items-center gap-1 self-start px-2.5 py-0.5 bg-white/20 backdrop-blur-sm rounded-full text-[9px] font-extrabold text-white shadow-sm border border-white/10 w-fit">
+                    <span>📍</span>
+                    <span>ICDS Centre 04 • Vijapur District</span>
+                  </div>
+                </div>
               </div>
               <span className="px-2 py-0.5 bg-white/20 rounded-full text-[9px] font-bold tracking-wider uppercase">AI Agent</span>
             </div>
@@ -227,9 +241,9 @@ export default function Dashboard() {
                   {[
                     { icon: <Menu className="w-5 h-5" />, label: t('dashboard'), action: () => setSidebarOpen(false) },
                     { icon: <User className="w-5 h-5" />, label: t('myProfile'), action: () => { setSidebarOpen(false); setProfileOpen(true); } },
-                    { icon: <Settings className="w-5 h-5" />, label: t('settings'), action: () => alert('Mock settings panel opened') },
+                    { icon: <Settings className="w-5 h-5" />, label: t('settings'), action: () => { setSidebarOpen(false); setSettingsOpen(true); } },
                     { icon: <Globe className="w-5 h-5" />, label: t('language'), action: () => navigate('/language', { state: { from: 'profile' } }) },
-                    { icon: <HelpCircle className="w-5 h-5" />, label: t('help'), action: () => alert('Help documents opened') },
+                    { icon: <HelpCircle className="w-5 h-5" />, label: t('help'), action: () => { setSidebarOpen(false); setHelpOpen(true); } },
                   ].map((item, i) => (
                     <button
                       key={i}
@@ -246,7 +260,10 @@ export default function Dashboard() {
               {/* Logout Footer */}
               <div className="p-4 border-t">
                 <button
-                  onClick={() => navigate('/login')}
+                  onClick={() => {
+                    localStorage.removeItem('isLoggedIn');
+                    navigate('/login');
+                  }}
                   className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-sm text-red-600 hover:bg-red-50 active:scale-95 transition-all font-bold"
                 >
                   <LogOut className="w-5 h-5" />
@@ -372,6 +389,131 @@ export default function Dashboard() {
                   <LogOut className="w-4 h-4" />
                   {t('logout')}
                 </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+        {/* 4. Settings Overlay Drawer */}
+        {settingsOpen && (
+          <div className="absolute inset-0 bg-[#F7F5F0] z-50 flex flex-col animate-slide-in-right text-slate-800">
+            <div className="bg-[#5C35C0] h-14 flex items-center justify-between px-4 shadow-md">
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setSettingsOpen(false)} 
+                  className="p-1 hover:bg-white/10 rounded-full active:scale-90 transition-transform"
+                >
+                  <X className="w-6 h-6 text-white" />
+                </button>
+                <span className="text-white font-bold text-base">{t('settings')}</span>
+              </div>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 space-y-4 text-left">
+                <h4 className="text-xs font-bold text-[#5C35C0] uppercase tracking-wider">Preferences</h4>
+                <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                  <div>
+                    <div className="text-xs font-bold text-[#1C1C1C]">App Language</div>
+                    <div className="text-[10px] text-gray-500 font-semibold mt-0.5">Currently: {currentLangName}</div>
+                  </div>
+                  <button 
+                    onClick={() => { setSettingsOpen(false); navigate('/language', { state: { from: 'profile' } }); }}
+                    className="text-xs text-[#5C35C0] font-extrabold hover:underline"
+                  >
+                    Change
+                  </button>
+                </div>
+                <div className="flex justify-between items-center py-2 border-b border-slate-50">
+                  <div>
+                    <div className="text-xs font-bold text-[#1C1C1C]">Voice Alerts</div>
+                    <div className="text-[10px] text-gray-500 font-semibold mt-0.5">Enable spoken tips and instructions</div>
+                  </div>
+                  <label className="relative inline-block w-10 h-5 cursor-pointer">
+                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <div className="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-[#5C35C0] transition-colors" />
+                    <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5 shadow" />
+                  </label>
+                </div>
+                <div className="flex justify-between items-center py-2">
+                  <div>
+                    <div className="text-xs font-bold text-[#1C1C1C]">Automatic Cache Sync</div>
+                    <div className="text-[10px] text-gray-500 font-semibold mt-0.5">Sync queue automatically when online</div>
+                  </div>
+                  <label className="relative inline-block w-10 h-5 cursor-pointer">
+                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <div className="w-10 h-5 bg-gray-200 rounded-full peer-checked:bg-[#5C35C0] transition-colors" />
+                    <div className="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5 shadow" />
+                  </label>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 space-y-4 text-left">
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Device & App</h4>
+                <div className="flex justify-between items-center text-xs font-semibold py-1.5 border-b border-slate-50">
+                  <span className="text-gray-500">App Version</span>
+                  <span className="text-[#1C1C1C] font-bold">v3.5.2-prod</span>
+                </div>
+                <div className="flex justify-between items-center text-xs font-semibold py-1.5 border-b border-slate-50">
+                  <span className="text-gray-500">Offline Storage</span>
+                  <span className="text-[#1C1C1C] font-bold">12.4 MB Used</span>
+                </div>
+                <div className="flex justify-between items-center text-xs font-semibold py-1.5">
+                  <span className="text-gray-500">Last Synced</span>
+                  <span className="text-[#1C1C1C] font-bold">2 mins ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 5. Help Overlay Drawer */}
+        {helpOpen && (
+          <div className="absolute inset-0 bg-[#F7F5F0] z-50 flex flex-col animate-slide-in-right text-slate-800">
+            <div className="bg-[#5C35C0] h-14 flex items-center justify-between px-4 shadow-md">
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => setHelpOpen(false)} 
+                  className="p-1 hover:bg-white/10 rounded-full active:scale-90 transition-transform"
+                >
+                  <X className="w-6 h-6 text-white" />
+                </button>
+                <span className="text-white font-bold text-base">{t('help')}</span>
+              </div>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
+              {/* Call Support Banner */}
+              <div className="bg-[#F0ECFF] border border-[#5C35C0]/20 rounded-xl p-4 text-center">
+                <h4 className="text-xs font-extrabold text-[#5C35C0] uppercase tracking-wider mb-1">ICDS Toll-Free Helpline</h4>
+                <p className="text-lg font-black text-[#5C35C0] mb-2">1800-180-5555</p>
+                <p className="text-[10px] text-gray-500 font-semibold">Available Monday to Saturday: 9:00 AM – 6:00 PM</p>
+              </div>
+
+              {/* FAQs */}
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 text-left space-y-4">
+                <h4 className="text-xs font-bold text-[#5C35C0] uppercase tracking-wider">Frequently Asked Questions</h4>
+                
+                <div className="space-y-3.5">
+                  <div>
+                    <h5 className="text-xs font-bold text-[#1C1C1C]">How to sync data offline?</h5>
+                    <p className="text-[10px] text-slate-500 leading-relaxed font-semibold mt-0.5">
+                      All your data is saved automatically on your phone when offline. Once you connect to the internet, open the "Data Sync Status" screen and click "Upload & Sync Data Now".
+                    </p>
+                  </div>
+                  <div className="border-t border-slate-50 pt-3">
+                    <h5 className="text-xs font-bold text-[#1C1C1C]">How to use Voice Assistant?</h5>
+                    <p className="text-[10px] text-slate-500 leading-relaxed font-semibold mt-0.5">
+                      Tap the purple floating mic icon on the bottom right and say a command, such as "Mark attendance" or "Show offline queue".
+                    </p>
+                  </div>
+                  <div className="border-t border-slate-50 pt-3">
+                    <h5 className="text-xs font-bold text-[#1C1C1C]">Can I delete a child profile?</h5>
+                    <p className="text-[10px] text-slate-500 leading-relaxed font-semibold mt-0.5">
+                      Go to Child Profiles, open the 3-dot context menu on the top right, and click "Delete Child".
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

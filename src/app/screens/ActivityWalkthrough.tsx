@@ -4,6 +4,7 @@ import { PhoneFrame } from '../components/PhoneFrame';
 import { StatusBar } from '../components/StatusBar';
 import { X, Play, Camera, ChevronLeft, ChevronRight } from 'lucide-react';
 import { t } from '../components/translations';
+import { ConnectivityStatus } from '../components/ConnectivityStatus';
 
 export default function ActivityWalkthrough() {
   const navigate = useNavigate();
@@ -26,17 +27,20 @@ export default function ActivityWalkthrough() {
         <StatusBar />
 
         {/* App Bar */}
-        <div className="bg-white px-4 py-3 flex items-center justify-between border-b shadow-sm z-10">
+        <div className="bg-[#5C35C0] px-4 py-3 flex items-center justify-between shadow-sm z-30 text-white">
           <button 
-            onClick={() => navigate('/activities')}
-            className="p-1 hover:bg-slate-100 rounded-full active:scale-95 transition-transform"
+            onClick={() => navigate('/dashboard')}
+            className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
           >
-            <X className="w-6 h-6 text-[#1C1C1C]" />
+            <X className="w-6 h-6 text-white" />
           </button>
-          <h1 className="font-bold text-[#1C1C1C] text-sm">{t('sortingGame')}</h1>
-          <span className="text-[10px] font-bold text-[#6B6B6B] uppercase tracking-wider">
-            {t('stepTitle')} {currentStep} / {totalSteps}
-          </span>
+          <h1 className="font-bold text-white text-sm">{t('sortingGame')}</h1>
+          <div className="flex items-center gap-1.5">
+            <ConnectivityStatus />
+            <span className="text-[10px] font-bold text-white/90 bg-white/20 px-2 py-1 rounded-full uppercase tracking-wider">
+              {t('stepTitle')} {currentStep}/{totalSteps}
+            </span>
+          </div>
         </div>
 
         {/* Progress Bar */}

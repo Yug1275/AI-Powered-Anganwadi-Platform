@@ -1,17 +1,31 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { Mic, X, Sparkles, Volume2 } from 'lucide-react';
 import { t } from './translations';
+import { useOnlineStatus } from './ConnectivityStatus';
 
 export function PhoneFrame({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isOnline } = useOnlineStatus();
 
   // Assistant overlay states
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [assistantText, setAssistantText] = useState('');
   const [assistantReply, setAssistantReply] = useState('');
   const [isListening, setIsListening] = useState(true);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleToast = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setToastMessage(customEvent.detail?.message || '');
+      const timer = setTimeout(() => setToastMessage(null), 3000);
+      return () => clearTimeout(timer);
+    };
+    window.addEventListener('show-toast', handleToast as EventListener);
+    return () => window.removeEventListener('show-toast', handleToast as EventListener);
+  }, []);
 
   // Define paths where the AI mic button should be HIDDEN (onboarding screens)
   const hideAIPaths = ['/', '/login', '/language'];
@@ -19,11 +33,12 @@ export function PhoneFrame({ children }: { children: ReactNode }) {
 
   // Dynamic voice commands mapped to translations
   const voiceCommands = [
-    { commandKey: 'attendanceTitle', commandDefault: 'Mark attendance', target: '/attendance', reply: 'Opening Smart Attendance screen to register attendance...' },
-    { commandKey: 'wellnessTitle', commandDefault: 'Show pending tasks', target: '/wellness', reply: 'Sure, opening the wellness priority tasks panel...' },
-    { commandKey: 'aiReportsTitle', commandDefault: 'Generate report', target: '/reports', reply: 'Taking you to the AI report generation center...' },
-    { commandKey: 'homeVisitsTitle', commandDefault: 'Show home visits', target: '/home-visits', reply: 'Opening priority home visits manager...' },
-    { commandKey: 'childProfilesTitle', commandDefault: 'Open child profile', target: '/child/1', reply: 'Opening profile details for Ananya Patel...' },
+    { commandKey: 'voiceCmdMarkAttendance', commandDefault: 'Mark attendance', target: '/attendance', reply: 'Opening Smart Attendance screen to register attendance...' },
+    { commandKey: 'voiceCmdOpenChildProfile', commandDefault: 'Open child profile', target: '/child/1', reply: 'Opening profile details for Ananya Patel...' },
+    { commandKey: 'voiceCmdShowPendingReports', commandDefault: 'Show pending reports', target: '/reports', reply: 'Sure, opening the AI reports page...' },
+    { commandKey: 'voiceCmdGenerateGrowthReport', commandDefault: 'Generate growth report', target: '/reports', reply: 'Generating automated growth report card...' },
+    { commandKey: 'voiceCmdShowOfflineQueue', commandDefault: 'Show offline queue', target: '/offline', reply: 'Opening pending local sync items...' },
+    { commandKey: 'voiceCmdSendParentReminder', commandDefault: 'Send parent reminder', target: '/parent-connect', reply: 'Opening parent connect notifications panels...' },
   ];
 
   return (
@@ -38,6 +53,14 @@ export function PhoneFrame({ children }: { children: ReactNode }) {
           {/* Screen Content */}
           <div className="relative w-full h-full bg-[#F7F5F0] overflow-hidden">
             {children}
+
+            {/* Global Slide-Down Toast Notification */}
+            {toastMessage && (
+              <div className="absolute top-16 left-4 right-4 bg-emerald-600 text-white rounded-xl py-3 px-4 shadow-xl z-50 flex items-center gap-2 border border-emerald-500 font-bold text-xs animate-fade-in transition-all">
+                <span>✓</span>
+                <span className="flex-1">{toastMessage}</span>
+              </div>
+            )}
 
             {/* Global Conversational AI Assistant Button */}
             {showAI && (
@@ -72,9 +95,14 @@ export function PhoneFrame({ children }: { children: ReactNode }) {
                   
                   <div className="px-5 pb-6 flex-1 flex flex-col">
                     <div className="flex justify-between items-center mb-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse" />
-                        <span className="text-xs font-bold text-[#5C35C0] tracking-wider uppercase">{t('voiceAssistant')}</span>
+                      <div className="flex flex-col">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2.5 h-2.5 rounded-full animate-pulse ${isOnline ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+                          <span className="text-xs font-bold text-[#5C35C0] tracking-wider uppercase">{t('voiceAssistant')}</span>
+                        </div>
+                        <span className="text-[9px] text-gray-400 font-bold mt-0.5">
+                          {isOnline ? 'Cloud AI model active' : 'Running on Offline AI Model (45 MB)'}
+                        </span>
                       </div>
                       <button 
                         onClick={() => setAssistantOpen(false)} 
@@ -135,7 +163,8 @@ export function PhoneFrame({ children }: { children: ReactNode }) {
                             key={idx}
                             onClick={() => {
                               setIsListening(false);
-                              setAssistantText(t(cmd.commandKey));
+                              const labelText = t(cmd.commandKey) !== cmd.commandKey ? t(cmd.commandKey) : cmd.commandDefault;
+                              setAssistantText(labelText);
                               setAssistantReply(cmd.reply);
                               
                               // Simulate routing delay
@@ -147,7 +176,7 @@ export function PhoneFrame({ children }: { children: ReactNode }) {
                             className="px-3.5 py-2 bg-slate-50 border border-slate-100 rounded-full text-xs text-[#1C1C1C] hover:bg-slate-100 font-bold transition-all active:scale-95 flex items-center gap-1.5"
                           >
                             <Sparkles className="w-3.5 h-3.5 text-[#5C35C0]" />
-                            {t(cmd.commandKey)}
+                            {t(cmd.commandKey) !== cmd.commandKey ? t(cmd.commandKey) : cmd.commandDefault}
                           </button>
                         ))}
                       </div>

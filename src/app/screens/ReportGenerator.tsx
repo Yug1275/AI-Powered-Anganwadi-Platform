@@ -5,6 +5,7 @@ import { StatusBar } from '../components/StatusBar';
 import { BottomNav } from '../components/BottomNav';
 import { ArrowLeft, ChevronRight, Eye, Share, Download, ChevronDown } from 'lucide-react';
 import { t } from '../components/translations';
+import { ConnectivityStatus } from '../components/ConnectivityStatus';
 
 export default function ReportGenerator() {
   const navigate = useNavigate();
@@ -56,14 +57,17 @@ export default function ReportGenerator() {
         <StatusBar purple />
 
         {/* App Bar */}
-        <div className="bg-[#5C35C0] px-4 py-3 flex items-center shadow-sm z-10">
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
-          >
-            <ArrowLeft className="w-6 h-6 text-white" />
-          </button>
-          <h1 className="font-bold text-white ml-4 tracking-wide">{t('reportsHeader')}</h1>
+        <div className="bg-[#5C35C0] px-4 py-3 flex items-center justify-between shadow-sm z-30">
+          <div className="flex items-center">
+            <button 
+              onClick={() => navigate('/dashboard')}
+              className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
+            >
+              <ArrowLeft className="w-6 h-6 text-white" />
+            </button>
+            <h1 className="font-bold text-white ml-4 tracking-wide">{t('reportsHeader')}</h1>
+          </div>
+          <ConnectivityStatus />
         </div>
 
         {/* Content */}
@@ -159,7 +163,25 @@ export default function ReportGenerator() {
                 </div>
 
                 <button 
-                  onClick={() => alert('Submitting report to your ICDS Supervisor...')}
+                  onClick={() => {
+                    const isOnline = localStorage.getItem('isOnline') !== 'false';
+                    if (!isOnline) {
+                      window.dispatchEvent(new CustomEvent('show-toast', { 
+                        detail: { message: t('savedOfflineMessage') || 'Saved Offline ✓ Will sync automatically later.' } 
+                      }));
+                      const pendingQueue = JSON.parse(localStorage.getItem('pendingQueue') || '[]');
+                      const newItem = {
+                        id: Date.now(),
+                        type: 'Report Submission: ' + (selectedReport === 'daily' ? 'Daily' : selectedReport === 'weekly' ? 'Weekly' : 'Monthly'),
+                        status: 'Pending',
+                        details: 'Submitted to Supervisor',
+                        size: '0.45 MB'
+                      };
+                      localStorage.setItem('pendingQueue', JSON.stringify([...pendingQueue, newItem]));
+                    } else {
+                      alert('Report submitted to your ICDS Supervisor successfully!');
+                    }
+                  }}
                   className="w-full h-12 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-xs shadow-md transition-all active:scale-95"
                 >
                   {btnSupervisor}

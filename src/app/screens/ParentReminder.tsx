@@ -5,12 +5,26 @@ import { StatusBar } from '../components/StatusBar';
 import { BottomNav } from '../components/BottomNav';
 import { ArrowLeft } from 'lucide-react';
 import { t } from '../components/translations';
+import { ConnectivityStatus } from '../components/ConnectivityStatus';
 
 export default function ParentReminder() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<'send' | 'history' | 'events'>('send');
   const [recipientType, setRecipientType] = useState<'all' | 'select'>('all');
   const [selectedType, setSelectedType] = useState<string | null>(null);
+
+  const [children] = useState(() => {
+    const saved = localStorage.getItem('anganwadiChildren');
+    const defaultRoster = [
+      { id: 1, nameKey: 'child1Name', initials: 'AP', color: 'bg-pink-400', emoji: '👧' },
+      { id: 2, nameKey: 'child2Name', initials: 'RK', color: 'bg-blue-400', emoji: '👦' },
+      { id: 3, nameKey: 'child3Name', initials: 'PS', color: 'bg-green-400', emoji: '👧' },
+      { id: 4, nameKey: 'child4Name', initials: 'AS', color: 'bg-purple-400', emoji: '👦' },
+      { id: 5, nameKey: 'child5Name', initials: 'SD', color: 'bg-orange-400', emoji: '👧' },
+    ];
+    return saved ? JSON.parse(saved) : defaultRoster;
+  });
+  const [selectedChildren, setSelectedChildren] = useState<Record<number, boolean>>({});
 
   const reminderTypes = [
     { id: 'vaccination', icon: '💉', labelKey: 'reminderVaccination' },
@@ -41,14 +55,17 @@ export default function ParentReminder() {
         <StatusBar purple />
 
         {/* App Bar */}
-        <div className="bg-[#5C35C0] px-4 py-3 flex items-center shadow-sm z-10">
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
-          >
-            <ArrowLeft className="w-6 h-6 text-white" />
-          </button>
-          <h1 className="font-bold text-white ml-4 tracking-wide">{t('parentConnectTitle')}</h1>
+        <div className="bg-[#5C35C0] px-4 py-3 flex items-center justify-between shadow-sm z-30">
+          <div className="flex items-center">
+            <button 
+              onClick={() => navigate('/dashboard')}
+              className="p-1 hover:bg-white/10 rounded-full active:scale-95 transition-transform"
+            >
+              <ArrowLeft className="w-6 h-6 text-white" />
+            </button>
+            <h1 className="font-bold text-white ml-4 tracking-wide">{t('parentConnectTitle')}</h1>
+          </div>
+          <ConnectivityStatus />
         </div>
 
         {/* Tabs */}
@@ -102,6 +119,41 @@ export default function ParentReminder() {
                   </button>
                 </div>
               </div>
+
+              {/* Dynamic Child Selector Checkboxes List */}
+              {recipientType === 'select' && (
+                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 animate-fade-in space-y-2">
+                  <h3 className="font-bold text-[#1C1C1C] text-xs uppercase tracking-wider mb-2">Select Students</h3>
+                  <div className="max-h-[180px] overflow-y-auto space-y-2 pr-1 scrollbar-hide">
+                    {children.map((child: any) => {
+                      const isSelected = selectedChildren[child.id] || false;
+                      const displayName = child.nameVal || t(child.nameKey);
+                      return (
+                        <label 
+                          key={child.id} 
+                          className="flex items-center justify-between p-2.5 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors border border-slate-100"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div className={`w-8 h-8 rounded-full ${child.color || 'bg-[#5C35C0]/20'} flex items-center justify-center text-xs font-bold ${child.color ? 'text-white' : 'text-[#5C35C0]'}`}>
+                              {child.emoji || child.initials || '👶'}
+                            </div>
+                            <span className="text-xs font-bold text-[#1C1C1C]">{displayName}</span>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => setSelectedChildren({ ...selectedChildren, [child.id]: !isSelected })}
+                            className="w-4 h-4 rounded border-slate-300 text-[#5C35C0] focus:ring-[#5C35C0] accent-[#5C35C0]"
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <div className="text-[10px] text-gray-500 font-bold text-right pt-1">
+                    Selected: {Object.values(selectedChildren).filter(Boolean).length} / {children.length}
+                  </div>
+                </div>
+              )}
 
               {/* Reminder Type */}
               <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">

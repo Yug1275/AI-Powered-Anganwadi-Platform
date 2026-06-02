@@ -12,6 +12,7 @@ import ParentReminder from "./screens/ParentReminder";
 import ReportGenerator from "./screens/ReportGenerator";
 import WorkerWellness from "./screens/WorkerWellness";
 import SupervisorDashboard from "./screens/SupervisorDashboard";
+import OfflineSync from "./screens/OfflineSync";
 
 export const router = createBrowserRouter([
   {
@@ -65,5 +66,9 @@ export const router = createBrowserRouter([
   {
     path: "/supervisor",
     Component: SupervisorDashboard,
+  },
+  {
+    path: "/offline",
+    Component: OfflineSync,
   },
 ]);
