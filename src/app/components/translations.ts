@@ -257,7 +257,8 @@ export const translations: Record<string, Record<string, string>> = {
     storyTime: 'Story Time: Panchatantra Tales',
     numberGame: 'Number Recognition Game',
     jumpingHopping: 'Jumping & Hopping',
-    rhymeTime: 'Rhyme Time: Nursery Songs'
+    rhymeTime: 'Rhyme Time: Nursery Songs',
+    attendanceHeader: 'Smart Attendance'
   },
   hi: {
     appTitle: 'साथी',
@@ -516,7 +517,8 @@ export const translations: Record<string, Record<string, string>> = {
     storyTime: 'कहानी का समय: पंचतंत्र की कहानियाँ',
     numberGame: 'संख्या पहचान खेल',
     jumpingHopping: 'कूदना और फुदकना',
-    rhymeTime: 'कविता का समय: बाल गीत'
+    rhymeTime: 'कविता का समय: बाल गीत',
+    attendanceHeader: 'स्मार्ट उपस्थिति'
   },
   gu: {
     appTitle: 'સાથી',
@@ -775,7 +777,8 @@ export const translations: Record<string, Record<string, string>> = {
     storyTime: 'વાર્તાનો સમય: પંચતંત્રની વાર્તાઓ',
     numberGame: 'અંક ઓળખ રમત',
     jumpingHopping: 'કૂદવું અને કૂદકો મારવો',
-    rhymeTime: 'કવિતાનો સમય: બાલ ગીતો'
+    rhymeTime: 'કવિતાનો સમય: બાલ ગીતો',
+    attendanceHeader: 'સ્માર્ટ હાજરી'
   },
   mr: {
     appTitle: 'साथी',
@@ -1034,7 +1037,8 @@ export const translations: Record<string, Record<string, string>> = {
     storyTime: 'गोष्टीची वेळ: पंचतंत्रातील कथा',
     numberGame: 'संख्या ओळख खेळ',
     jumpingHopping: 'उड्या मारणे',
-    rhymeTime: 'बडबडगीतांची वेळ: बालगीते'
+    rhymeTime: 'बडबडगीतांची वेळ: बालगीते',
+    attendanceHeader: 'स्मार्ट उपस्थिती'
   },
   ta: {
     appTitle: 'சாரதி',
@@ -1293,7 +1297,8 @@ export const translations: Record<string, Record<string, string>> = {
     storyTime: 'கதை நேரம்: பஞ்சதந்திரக் கதைகள்',
     numberGame: 'எண் அறிதல் விளையாட்டு',
     jumpingHopping: 'குதித்தல் மற்றும் தாண்டுதல்',
-    rhymeTime: 'பாடல் நேரம்: நர்சரி பாடல்கள்'
+    rhymeTime: 'பாடல் நேரம்: நர்சரி பாடல்கள்',
+    attendanceHeader: 'ஸ்மார்ட் வருகை'
   },
   te: {
     appTitle: 'సారథి',
@@ -1552,7 +1557,8 @@ export const translations: Record<string, Record<string, string>> = {
     storyTime: 'కథల సమయం: పంచతంత్ర కథలు',
     numberGame: 'అంకెల గుర్తింపు ఆట',
     jumpingHopping: 'దూకడం మరియు గంతేయడం',
-    rhymeTime: 'పాటల సమయం: నర్సరీ పాటలు'
+    rhymeTime: 'పాటల సమయం: నర్సరీ పాటలు',
+    attendanceHeader: 'స్మార్ట్ హాజరు'
   }
 };
 
