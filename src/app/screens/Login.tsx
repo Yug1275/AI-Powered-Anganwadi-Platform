@@ -10,6 +10,19 @@ export default function Login() {
   const [mobile, setMobile] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [workerId, setWorkerId] = useState('');
+
+  const handleLogin = () => {
+    if (tab === 'worker' && workerId.toUpperCase() === 'SUPERVISOR') {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userRole', 'supervisor');
+      navigate('/supervisor');
+    } else {
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userRole', 'worker');
+      navigate('/dashboard');
+    }
+  };
 
   return (
     <PhoneFrame>
@@ -112,6 +125,8 @@ export default function Login() {
                 </label>
                 <input
                   type="text"
+                  value={workerId}
+                  onChange={(e) => setWorkerId(e.target.value)}
                   placeholder="e.g. GJ-2024-1847"
                   className="w-full h-12 px-4 bg-slate-100 rounded-xl text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-[#5C35C0]"
                 />
@@ -151,10 +166,7 @@ export default function Login() {
           )}
 
           <button
-            onClick={() => {
-              localStorage.setItem('isLoggedIn', 'true');
-              navigate('/dashboard');
-            }}
+            onClick={handleLogin}
             className="w-full h-[52px] bg-[#5C35C0] text-white rounded-xl font-bold text-xs mt-6 hover:bg-[#4A2A9F] active:scale-95 transition-all shadow-md"
           >
             {t('loginBtn')}
