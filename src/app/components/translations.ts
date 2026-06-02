@@ -251,7 +251,13 @@ export const translations: Record<string, Record<string, string>> = {
     reminderMsgMeeting: "Dear parent, The monthly Parent-Teacher meeting is scheduled for tomorrow at 10 AM. Your presence is requested.",
     reminderMsgAlert: "Dear parent, Due to weather alerts, Anganwadi timings will be 8 AM to 11 AM today. Ensure safe transit.",
     reminderMsgEvent: "Dear parent, Join us for the Children Day celebration at Anganwadi on Friday at 9:30 AM. Fun activities planned!",
-    reminderMsgCustom: "Dear parent, [Custom message text will appear here]. Please reach out if you have any questions."
+    reminderMsgCustom: "Dear parent, [Custom message text will appear here]. Please reach out if you have any questions.",
+    today: 'Today',
+    todayDate: 'Today is Tuesday, 2 June 2026',
+    storyTime: 'Story Time: Panchatantra Tales',
+    numberGame: 'Number Recognition Game',
+    jumpingHopping: 'Jumping & Hopping',
+    rhymeTime: 'Rhyme Time: Nursery Songs'
   },
   hi: {
     appTitle: 'साथी',
@@ -504,7 +510,13 @@ export const translations: Record<string, Record<string, string>> = {
     reminderMsgMeeting: "प्रिय अभिभावक, मासिक अभिभावक-शिक्षक बैठक कल सुबह 10 बजे निर्धारित है। आपकी उपस्थिति सादर प्रार्थनीय है।",
     reminderMsgAlert: "प्रिय अभिभावक, मौसम की चेतावनी के कारण, आज आंगनवाड़ी का समय सुबह 8 से 11 बजे का रहेगा। सुरक्षित रहें।",
     reminderMsgEvent: "प्रिय अभिभावक, शुक्रवार सुबह 9:30 बजे आंगनवाड़ी में बाल दिवस समारोह में शामिल हों। कई रोचक गतिविधियाँ होंगी!",
-    reminderMsgCustom: "प्रिय अभिभावक, [कस्टम संदेश यहाँ दिखाई देगा]। यदि आपके कोई प्रश्न हों तो कृपया संपर्क करें।"
+    reminderMsgCustom: "प्रिय अभिभावक, [कस्टम संदेश यहाँ दिखाई देगा]। यदि आपके कोई प्रश्न हों तो कृपया संपर्क करें।",
+    today: 'आज',
+    todayDate: 'आज मंगलवार, 2 जून 2026 है',
+    storyTime: 'कहानी का समय: पंचतंत्र की कहानियाँ',
+    numberGame: 'संख्या पहचान खेल',
+    jumpingHopping: 'कूदना और फुदकना',
+    rhymeTime: 'कविता का समय: बाल गीत'
   },
   gu: {
     appTitle: 'સાથી',
@@ -757,7 +769,13 @@ export const translations: Record<string, Record<string, string>> = {
     reminderMsgMeeting: "પ્રિય વાલી, માસિક વાલી-શિક્ષક બેઠક આવતીકાલે સવારે 10 વાગ્યે નક્કી કરેલ છે. તમારી હાજરી અનિવાર્ય છે.",
     reminderMsgAlert: "પ્રિય વાલી, હવામાન ચેતવણીને કારણે, આજે આંગણવાડીનો સમય સવારે 8 થી 11 વાગ્યાનો રહેશે. સુરક્ષિત રહો.",
     reminderMsgEvent: "પ્રિય વાલી, શુક્રવારે સવારે 9:30 વાગ્યે આંગણવાડીમાં બાળ દિવસની ઉજવણીમાં જોડાઓ. વિવિધ પ્રવૃત્તિઓનું આયોજન છે!",
-    reminderMsgCustom: "પ્રિય વાલી, [કસ્ટમ સંદેશ અહીં દેખાશે]. જો તમને કોઈ પ્રશ્નો હોય તો સંપર્ક કરો."
+    reminderMsgCustom: "પ્રિય વાલી, [કસ્ટમ સંદેશ અહીં દેખાશે]. જો તમને કોઈ પ્રશ્નો હોય તો સંપર્ક કરો.",
+    today: 'આજે',
+    todayDate: 'આજે મંગળવાર, 2 જૂન 2026 છે',
+    storyTime: 'વાર્તાનો સમય: પંચતંત્રની વાર્તાઓ',
+    numberGame: 'અંક ઓળખ રમત',
+    jumpingHopping: 'કૂદવું અને કૂદકો મારવો',
+    rhymeTime: 'કવિતાનો સમય: બાલ ગીતો'
   },
   mr: {
     appTitle: 'साथी',
@@ -1010,7 +1028,13 @@ export const translations: Record<string, Record<string, string>> = {
     reminderMsgMeeting: "प्रिय पालक, मासिक पालक-शिक्षक सभा उद्या सकाळी १० वाजता आयोजित केली आहे. आपली उपस्थिती आवश्यक आहे.",
     reminderMsgAlert: "प्रिय पालक, हवामानाच्या इशाऱ्यामुळे, आज अंगणवाडीची वेळ सकाळी ८ ते ११ अशी असेल. सुरक्षित प्रवास सुनिश्चित करा.",
     reminderMsgEvent: "प्रिय पालक, शुक्रवारी सकाळी ९:३० वाजता अंगणवाडीत होणाऱ्या बालदिन उत्साहात सामील व्हा. अनेक खेळ नियोजित आहेत!",
-    reminderMsgCustom: "प्रिय पालक, [सानुकूल संदेश येथे दिसेल]. काही शंका असल्यास कृपया संपर्क साधा."
+    reminderMsgCustom: "प्रिय पालक, [सानुकूल संदेश येथे दिसेल]. काही शंका असल्यास कृपया संपर्क साधा.",
+    today: 'आज',
+    todayDate: 'आज मंगळवार, २ जून २०२६ आहे',
+    storyTime: 'गोष्टीची वेळ: पंचतंत्रातील कथा',
+    numberGame: 'संख्या ओळख खेळ',
+    jumpingHopping: 'उड्या मारणे',
+    rhymeTime: 'बडबडगीतांची वेळ: बालगीते'
   },
   ta: {
     appTitle: 'சாரதி',
@@ -1263,7 +1287,13 @@ export const translations: Record<string, Record<string, string>> = {
     reminderMsgMeeting: "அன்புள்ள பெற்றோரே, மாதாந்திர பெற்றோர்-ஆசிரியர் கூட்டம் நாளை காலை 10 மணிக்கு நடைபெறும். உங்களது வருகை அவசியம்.",
     reminderMsgAlert: "அன்புள்ள பெற்றோரே, வானிலை எச்சரிக்கை காரணமாக இன்று மையத்தின் நேரம் காலை 8 மணி முதல் 11 மணி வரை இருக்கும்.",
     reminderMsgEvent: "அன்புள்ள பெற்றோரே, வெள்ளிக்கிழமை காலை 9:30 மணிக்கு மையத்தில் நடைபெறும் குழந்தைகள் தின கொண்டாட்டத்தில் பங்கேற்கவும்.",
-    reminderMsgCustom: "அன்புள்ள பெற்றோரே, [தனிப்பயன் செய்தி இங்கே தோன்றும்]. ஏதேனும் கேள்விகள் இருந்தால் எங்களை தொடர்பு கொள்ளவும்."
+    reminderMsgCustom: "அன்புள்ள பெற்றோரே, [தனிப்பயன் செய்தி இங்கே தோன்றும்]. ஏதேனும் கேள்விகள் இருந்தால் எங்களை தொடர்பு கொள்ளவும்.",
+    today: 'இன்று',
+    todayDate: 'இன்று செவ்வாய்கிழமை, 2 ஜூன் 2026',
+    storyTime: 'கதை நேரம்: பஞ்சதந்திரக் கதைகள்',
+    numberGame: 'எண் அறிதல் விளையாட்டு',
+    jumpingHopping: 'குதித்தல் மற்றும் தாண்டுதல்',
+    rhymeTime: 'பாடல் நேரம்: நர்சரி பாடல்கள்'
   },
   te: {
     appTitle: 'సారథి',
@@ -1516,7 +1546,13 @@ export const translations: Record<string, Record<string, string>> = {
     reminderMsgMeeting: "ప్రియమైన తల్లిదండ్రులారా, నెలవారీ తల్లిదండ్రుల సమావేశం రేపు ఉదయం 10 గంటలకు జరుగుతుంది. మీ హాజరు తప్పనిసరి.",
     reminderMsgAlert: "ప్రియమైన తల్లిదండ్రులారా, వాతావరణ హెచ్చరిక కారణంగా ఈరోజు కేంద్రం పనివేళలు ఉదయం 8 నుండి 11 గంటల వరకు ఉంటాయి.",
     reminderMsgEvent: "ప్రియమైన తల్లిదండ్రులారా, శుక్రవారం ఉదయం 9:30 గంటలకు కేంద్రంలో జరిగే బాలల దినోత్సవ వేడుకలలో పాల్గొనండి.",
-    reminderMsgCustom: "ప్రియమైన తల్లిదండ్రులారా, [ఇక్కడ మీ కస్టమ్ సందేశం కనిపిస్తుంది]. ఏమైనా సందేహాలుంటే మమ్మల్ని సంప్రదించండి."
+    reminderMsgCustom: "ప్రియమైన తల్లిదండ్రులారా, [ఇక్కడ మీ కస్టమ్ సందేశం కనిపిస్తుంది]. ఏమైనా సందేహాలుంటే మమ్మల్ని సంప్రదించండి.",
+    today: 'ఈరోజు',
+    todayDate: 'ఈరోజు మంగళవారం, 2 జూన్ 2026',
+    storyTime: 'కథల సమయం: పంచతంత్ర కథలు',
+    numberGame: 'అంకెల గుర్తింపు ఆట',
+    jumpingHopping: 'దూకడం మరియు గంతేయడం',
+    rhymeTime: 'పాటల సమయం: నర్సరీ పాటలు'
   }
 };
 

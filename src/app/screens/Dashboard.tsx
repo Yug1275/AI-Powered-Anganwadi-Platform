@@ -78,7 +78,7 @@ export default function Dashboard() {
             <div className="flex justify-between items-start">
               <div>
                 <h2 className="text-xl font-bold tracking-tight">{t('goodMorning')}</h2>
-                <p className="text-[11px] opacity-75 mt-0.5 font-medium">Today is Tuesday, 2 June 2026</p>
+                <p className="text-[11px] opacity-75 mt-0.5 font-medium">{t('todayDate')}</p>
               </div>
               <span className="px-2 py-0.5 bg-white/20 rounded-full text-[9px] font-bold tracking-wider uppercase">AI Agent</span>
             </div>
@@ -92,7 +92,7 @@ export default function Dashboard() {
                   { value: '32', label: t('childrenRegistered'), bg: 'bg-white/10 border-white/5' },
                   { value: '5', label: t('homeVisitsDue'), bg: 'bg-[#E8A020]/20 text-[#FFD275] border-[#E8A020]/10' },
                   { value: '2', label: t('reportsPending'), bg: 'bg-red-500/20 text-red-200 border-red-500/10' },
-                  { value: 'Today', label: t('nutritionDistribution'), bg: 'bg-green-500/20 text-green-200 border-green-500/10' },
+                  { value: t('today'), label: t('nutritionDistribution'), bg: 'bg-green-500/20 text-green-200 border-green-500/10' },
                 ].map((stat, idx) => (
                   <div key={idx} className={`p-3 ${stat.bg} rounded-xl border flex items-center justify-between shadow-sm`}>
                     <span className="text-xs text-white/80 font-medium leading-tight">{stat.label}</span>
