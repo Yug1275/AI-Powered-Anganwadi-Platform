@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { PhoneFrame } from '../components/PhoneFrame';
 import { StatusBar } from '../components/StatusBar';
@@ -26,8 +27,17 @@ const pieData = [
 export default function SupervisorDashboard() {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const isLogin = localStorage.getItem('isLogin') === 'true';
+    const userRole = localStorage.getItem('userRole');
+    if (!isLogin || userRole !== 'supervisor') {
+      navigate('/login');
+    }
+  }, [navigate]);
+
   const handleLogout = () => {
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('isLogin');
     localStorage.removeItem('userRole');
     navigate('/login');
   };

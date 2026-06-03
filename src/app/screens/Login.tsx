@@ -15,10 +15,12 @@ export default function Login() {
   const handleLogin = () => {
     if (tab === 'worker' && workerId.toUpperCase() === 'SUPERVISOR') {
       localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('isLogin', 'true');
       localStorage.setItem('userRole', 'supervisor');
       navigate('/supervisor');
     } else {
       localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('isLogin', 'true');
       localStorage.setItem('userRole', 'worker');
       navigate('/dashboard');
     }

@@ -21,8 +21,13 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.setItem('isLoggedIn', 'true');
-  }, []);
+    const isLogin = localStorage.getItem('isLogin') === 'true';
+    if (!isLogin) {
+      navigate('/login');
+    } else {
+      localStorage.setItem('isLoggedIn', 'true');
+    }
+  }, [navigate]);
 
   // Active language display mapping
   const langMap: Record<string, string> = {
@@ -262,6 +267,8 @@ export default function Dashboard() {
                 <button
                   onClick={() => {
                     localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('isLogin');
+                    localStorage.removeItem('userRole');
                     navigate('/login');
                   }}
                   className="w-full flex items-center gap-4 px-4 py-3 rounded-lg text-sm text-red-600 hover:bg-red-50 active:scale-95 transition-all font-bold"
@@ -382,8 +389,13 @@ export default function Dashboard() {
                   <Globe className="w-4 h-4" />
                   {t('langPreference')}
                 </button>
-                <button
-                  onClick={() => navigate('/login')}
+                 <button
+                  onClick={() => {
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('isLogin');
+                    localStorage.removeItem('userRole');
+                    navigate('/login');
+                  }}
                   className="w-full h-11 bg-red-600 text-white rounded-xl font-bold text-xs hover:bg-red-700 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-sm"
                 >
                   <LogOut className="w-4 h-4" />

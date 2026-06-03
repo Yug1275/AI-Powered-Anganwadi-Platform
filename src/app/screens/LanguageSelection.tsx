@@ -9,7 +9,7 @@ export default function LanguageSelection() {
   const location = useLocation();
   const [selected, setSelected] = useState<string | null>(null);
 
-  const fromProfile = location.state?.from === 'profile' || localStorage.getItem('isLoggedIn') === 'true';
+  const fromProfile = location.state?.from === 'profile';
 
   const languages = [
     { code: 'hi', native: 'हिंदी', english: 'Hindi' },
@@ -25,7 +25,7 @@ export default function LanguageSelection() {
       <div className="w-full h-full bg-white flex flex-col">
         {/* Header */}
         <div className="p-4 pt-6">
-          <button onClick={() => fromProfile ? navigate('/dashboard') : navigate('/')} className="mb-4 active:scale-95 transition-transform">
+          <button onClick={() => fromProfile ? (localStorage.getItem('userRole') === 'supervisor' ? navigate('/supervisor') : navigate('/dashboard')) : navigate('/')} className="mb-4 active:scale-95 transition-transform">
             <ArrowLeft className="w-6 h-6 text-[#1C1C1C]" />
           </button>
           <h2 className="text-center font-bold text-base mb-1">Choose Your Language / भाषा चुनें</h2>
@@ -71,8 +71,19 @@ export default function LanguageSelection() {
             onClick={() => {
               if (selected) {
                 setSelectedLanguage(selected);
-                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-                (fromProfile || isLoggedIn) ? navigate('/dashboard') : navigate('/login');
+                if (fromProfile) {
+                  const role = localStorage.getItem('userRole');
+                  if (role === 'supervisor') {
+                    navigate('/supervisor');
+                  } else {
+                    navigate('/dashboard');
+                  }
+                } else {
+                  localStorage.removeItem('isLoggedIn');
+                  localStorage.removeItem('isLogin');
+                  localStorage.removeItem('userRole');
+                  navigate('/login');
+                }
               }
             }}
             disabled={!selected}
